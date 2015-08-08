@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.phonegap.helloworld" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>Hello World</name>
+    <name>Rappjobos</name>
     <description>
-        Hello World sample application that responds to the deviceready event.
+        Disfruta de los mejores remix desde cualquier lugar del mundo
     </description>
     <author email="support@phonegap.com" href="http://phonegap.com">
-        PhoneGap Team
+        Kevin Rovira
     </author>
     <content src="index.html" />
     <preference name="permissions" value="none" />
