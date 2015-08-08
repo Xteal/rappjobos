@@ -24,13 +24,14 @@
 			   		redirect_uri: "https://soundcloud.com/connect",
 				});
 				SC.get("/tracks", {user_id: 135802134}, function(tracks){
-					var canciones = ""; 
+					var canciones = "", debug = ""; 
 			 		$.each(tracks,function(index,value) {
 			 			if(value.artwork_url==null) 
 			 				value.artwork_url = "img/cover.jpg";
-
+			 				debug += value.title+"<br>";
 			 				canciones +="<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
 			 				$(".ultimas_canciones").html(canciones);
+			 				$(".debug").html(debug);
 			 				$(".ultimas_canciones").listview("refresh");
 			 			//$(".ultimas_canciones").append("<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><div class='ui-grid-a'><div class='ui-block-a'><div style='height:100px'><img src='"+value.artwork_url+"' /></div></div><div class='ui-block-b'><div style='height:100px'><b>"+value.title+"</b></div></div></div></li>");
 			 		})
@@ -57,6 +58,7 @@
 			<div data-role="header"><img src="img/logo.png" /></div>
 			<div data-role="content" style="margin:auto" class="ui-content" role="main">
 				<ul class="ui-listview ultimas_canciones" data-split-theme="a" data-split-icon="gear" data-role="listview"></ul>
+				<div class="debug"></div>
 			</div>
 		</div>
 	</body>
