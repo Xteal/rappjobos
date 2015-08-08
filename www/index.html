@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>RappJobos</title>
-		<meta name="viewport" content="initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
 		<link href="css/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css"/>
 		<link href="css/jquery.mobile.theme-1.4.5.min.css" rel="stylesheet" type="text/css"/>
 		<link href="css/jquery.mobile.structure-1.4.5.min.css" rel="stylesheet" type="text/css"/>
@@ -22,7 +22,6 @@
     			$.mobile.allowCrossDomainPages = true;
 			});
 			$(function() {
-				alert("RAPPJOBOS IN SESSION");
 				var mySound;
 				var canciones = [];
 				SC.initialize({
@@ -33,10 +32,10 @@
 			 		$.each(tracks,function(index,value) {
 			 			if(value.artwork_url==null) 
 			 				value.artwork_url = "img/cover.jpg";
-			 			$("#ultimas_canciones").append("<li><img src='"+value.artwork_url+"' /><div class='titulo_remix'>"+value.title+"</div><a href='#' class='play_song' data-id='"+value.id+"'' data-stream='"+value.stream_url+"'>Play</a><div class='clear'></div></li>");
+			 			$(".ultimas_canciones").append("<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><div class='ui-grid-a'><div class='ui-block-a'><div class='ui-bar ui-bar-a' style='height:100px'><img src='"+value.artwork_url+"' /></div></div><div class='ui-block-b'><div class='ui-bar ui-bar-a' style='height:100px'><div class='titulo_remix'>"+value.title+"</div></div></div></div><div class='clear'></div></li>");
 			 		})
 				});
-				$("#ultimas_canciones").on("click","a",function() {
+				$(".ultimas_canciones").on("click","li",function() {
 					var id = $(this).attr("data-id");
 					var stream = $(this).attr("data-stream")+"?client_id=f36abe5e283bc2059b1f55507af890eb";
 					if(mySound)
@@ -52,8 +51,11 @@
 		</script>
 	</head>
 	<body>
-		<header><img src="img/logo.png" /></header>
-		<ul id="ultimas_canciones" data-role="listview"></ul>
-		<div class="clear"></div>
+		<div data-role="page">
+			<div data-role="header"><img src="img/logo.png" /></div>
+			<div data-role="content" style="margin:auto">
+				<ul data-role="listview" class="ultimas_canciones"></ul>
+			</div>
+		</div>
 	</body>
 </html>

@@ -1,30 +1,32 @@
-header {
-	background:rgba(0,0,0,0.8);
+div [data-role="header"] {
+	background:rgba(0,0,0,0.8)!important;
 	position:fixed;
 	z-index:9;
 	width:100%;
 	padding:5px;
 }
-#bar {
-	position:fixed;
-	height:5%;
-	background-color:#444;
-}
-#ultimas_canciones {
+.ultimas_canciones {
 	width:100%;
-	margin-top:65px;
+	padding:1em;
+	margin-top:2.5em!important;
 }
-#ultimas_canciones li {
+.ultimas_canciones li {
+	border-bottom:2px #333;
+	cursor:pointer;
 	margin-bottom:3px;
 }
+.ultimas_canciones li:hover {
+	background: #333;
+}
 
-#ultimas_canciones li>img {
+.ultimas_canciones li>img {
 	float:left;
 	margin-left:5px;
 }
 
-#ultimas_canciones li .titulo_remix{
-	float:left;
+.ultimas_canciones li .titulo_remix{
+	float:right;
+	font-size:0.75em;
 	margin.left:5px;
 }
 
@@ -41,11 +43,4 @@ header {
 }
 .sm2-bar-ui .sm2-inline-texture {
  background: transparent;
-}
-.play_song {
-	padding:4px;
-	color:#FFF!important;
-	background: rgba(0,0,0,0.8);
-	border-radius:4px;
-	text-decoration: none;
 }
