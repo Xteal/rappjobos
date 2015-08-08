@@ -17,6 +17,10 @@
 		<script src="script/bar-ui.js"></script>
 		<script src="script/demo.js"></script>
 		<script>
+			$( document ).bind( "mobileinit", function() {
+   				 // Make your jQuery Mobile framework configuration changes here!
+    			$.mobile.allowCrossDomainPages = true;
+			});
 			$(function() {
 				var mySound;
 				var canciones = [];
@@ -49,5 +53,6 @@
 	<body>
 		<header><img src="img/logo.png" /></header>
 		<ul id="ultimas_canciones" data-role="listview"></ul>
+		<div class="clear"></div>
 	</body>
 </html>
