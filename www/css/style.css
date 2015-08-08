@@ -44,3 +44,7 @@ div [data-role="header"] {
 .sm2-bar-ui .sm2-inline-texture {
  background: transparent;
 }
+.loading {
+	margin:auto;
+	margin-top:2.5em;
+}
