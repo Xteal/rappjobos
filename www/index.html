@@ -18,22 +18,18 @@
 		<script src="script/demo.js"></script>		
 		<script>
 			$(document).on('pageinit', function() {
-				var mySound;
-				SC.initialize({
-			    	client_id: "f36abe5e283bc2059b1f55507af890eb",
-				});
-
-					SC.get("/tracks", {user_id: 135802134}, function(tracks){
-						var canciones = ""; 
-				 		$.each(tracks,function(index,value) {
-				 			if(value.artwork_url==null) 
-				 				value.artwork_url = "img/cover.jpg";
-				 				canciones +="<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
+				var mySound, canciones ="";
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
+						$.getJSON(url, function(tracks) {
+							$(tracks).each(function(index,value) {
+								if(value.artwork_url==null) 
+					 				value.artwork_url = "img/cover.jpg";
+				 					canciones +="<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
 				 				$(".ultimas_canciones").html(canciones);
 				 				$(".ultimas_canciones").listview("refresh");
-				 		})
-					});		
-				
+						});
+					});
+	
 				$(".ultimas_canciones").on("click","li",function() {
 					var id = $(this).attr("data-id");
 					var stream = $(this).attr("data-stream")+"?client_id=f36abe5e283bc2059b1f55507af890eb";
