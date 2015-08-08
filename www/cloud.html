@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<title>RappJobos</title>
+		<meta name="viewport" content="initial-scale=1">
+		<script src="js/jquery.js"></script>
+		<script src="js/jquery.mobile-1.4.5.min.js"></script>
+		<link href="css/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.theme-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.structure-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.inline-svg-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.inline-png-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.icons-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/style.css" rel="stylesheet" type="text/css"/>
+		<link href="css/bar-ui.css" rel="stylesheet" type="text/css"/>
+		<script src="//connect.soundcloud.com/sdk-2.0.0.js"></script>
+		<script src="script/soundmanager2-nodebug-jsmin.js"></script>
+		<script src="script/bar-ui.js"></script>
+		<script src="script/demo.js"></script>
+		<script>
+			$(function() {
+				var mySound;
+				var canciones = [];
+				SC.initialize({
+			    	client_id: "f36abe5e283bc2059b1f55507af890eb",
+			   		redirect_uri: "https://soundcloud.com/connect",
+				});
+			 	SC.get("/tracks", {user_id: 135802134}, function(tracks){
+			 		$.each(tracks,function(index,value) {
+			 			if(value.artwork_url==null) 
+			 				value.artwork_url = "img/cover.jpg";
+			 			$("#ultimas_canciones").append("<li><img src='"+value.artwork_url+"' /><div class='titulo_remix'>"+value.title+"</div><a href='#' class='play_song' data-id='"+value.id+"'' data-stream='"+value.stream_url+"'>Play</a><div class='clear'></div></li>");
+			 		})
+				});
+				$("#ultimas_canciones").on("click","a",function() {
+					var id = $(this).attr("data-id");
+					var stream = $(this).attr("data-stream")+"?client_id=f36abe5e283bc2059b1f55507af890eb";
+					if(mySound)
+						mySound.destruct();
+
+					mySound = soundManager.createSound({
+				    	id: id,
+				    	url: stream
+				    });
+				    mySound.play();
+				})
+			})
+		</script>
+	</head>
+	<body>
+		<header><img src="img/logo.png" /></header>
+		<ul id="ultimas_canciones" data-role="listview"></ul>
+	</body>
+</html>
