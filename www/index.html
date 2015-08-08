@@ -18,31 +18,46 @@
 		<script src="script/demo.js"></script>		
 		<script>
 			$(document).on('pageinit', function() {
-				var mySound, canciones ="";
+				var mySound, canciones ="",posicion=1;
 					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
 						$.getJSON(url, function(tracks) {
 							$(tracks).each(function(index,value) {
 								if(value.artwork_url==null) 
 					 				value.artwork_url = "img/cover.jpg";
-				 					canciones +="<li class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
+				 					canciones +="<li data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
 				 				$(".ultimas_canciones").html(canciones);
 				 				$(".ultimas_canciones").listview("refresh");
+				 				posicion++;
+
+								soundManager.createSound({
+							    	id: value.id,
+							    	url: value.stream_url+"?client_id=f36abe5e283bc2059b1f55507af890eb"
+							    });
 						});
 					});
 	
 				$(".ultimas_canciones").on("click","li",function() {
 					var id = $(this).attr("data-id");
-					var stream = $(this).attr("data-stream")+"?client_id=f36abe5e283bc2059b1f55507af890eb";
+					var posicion = $(this).attr("data-posicion");
 					if(mySound)
-						mySound.destruct();
-
-					mySound = soundManager.createSound({
-				    	id: id,
-				    	url: stream
-				    });
-				    mySound.play();
+						soundManager.stopAll();
+				  		soundManager.play(id,{onfinish:function() {
+				  			playNext(posicion);
+				  		}});
 				});
-			})
+			});
+			function playNext(posicion) {
+				var nuevaposicion = parseInt(posicion)+parseInt(1);
+				soundManager.stopAll();
+				if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+					posicion = 1;
+				else
+					posicion = nuevaposicion;
+
+				soundManager.play($("li[data-posicion='"+posicion+"']").attr("data-id"),{onfinish:function() {
+		  			playNext(posicion);
+		  		}});
+			}
 		</script>
 	</head>
 	<body>
