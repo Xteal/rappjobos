@@ -6,10 +6,31 @@ div [data-role="header"] {
 	width:100%;
 	padding:5px;
 }
+.social-icons {
+	float:right;
+	margin:13px;
+}
+.social-icons a{
+	margin-right:3px;
+	font-size:1.3em;
+}
+.social-icons .icon-soundcloud {
+	color:#FF6300;
+}
+.social-icons .icon-facebook2{
+	color:#4862A3;
+}
+.social-icons .icon-twitter2{
+	color:#88C9F9;
+}
+.social-icons .icon-youtube3{
+	color:#CC181E;
+}
 .ultimas_canciones {
 	width:100%;
 	padding:1em;
 	margin-top:2.5em!important;
+	margin-bottom:2.5em!important;
 }
 .ultimas_canciones li {
 	border-bottom:2px #333;
@@ -50,6 +71,7 @@ div [data-role="header"] {
 	margin-top:2.5em;
 }
 .soundbar {
+	text-shadow:none;
 	padding:1em;
 	height:20px;
 	background:#000;
@@ -60,13 +82,51 @@ div [data-role="header"] {
 .play {
 	float:left;
 }
-.media-info {
-	text-align:center;
-	width:90%;
+.play a {
+	text-decoration: none;
+}
+.anterior {
+	margin-left:12px;
 	float:left;
+}
+.anterior a {
+	text-decoration: none;
+}
+.siguiente {
+	margin-left:12px;
+	float:left;
+}
+.siguiente a {
+	text-decoration: none;
+}
+.media-info {
+	max-width:50%;
+	text-align:center;
+	margin:auto;
 	color:white;
 }
-.duration {
+.bucle{
 	float:right;
 	margin-right:2em;
+}
+.bucle a[data-active='false'] {
+	color:#545454;
+}
+.duration {
+	color:#CECECE;
+	float:right;
+	margin-right:2em;
+}
+.icon {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
+
+.icon-play3 {
+	font-size: 24px; // works because "width" & "height" were set using em units
+}
+.icon-pause2 {
+	font-size: 24px; // works because "width" & "height" were set using em units
 }

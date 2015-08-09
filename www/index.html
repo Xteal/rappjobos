@@ -15,18 +15,22 @@
 		<script src="js/sdk-2.0.0.js"></script>
 		<script src="script/soundmanager2-nodebug-jsmin.js"></script>
 		<script src="script/bar-ui.js"></script>
-		<script src="script/demo.js"></script>		
+		<script src="script/demo.js"></script>	
+		<link rel="stylesheet" href="https://i.icomoon.io/public/temp/7152cdf696/UntitledProject/style-svg.css">
+		<script src="https://i.icomoon.io/public/temp/7152cdf696/UntitledProject/svgembedder.js"></script>	
 		<script>
 			//Rajobos: 135802134
 			//Kevin: 166601907
 			$(document).on('pageinit', function() {
+					$("#includedContent").load("icons.html"); 
 					var mySound, canciones ="",posicion=1;
-					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
 						$.getJSON(url, function(tracks) {
 							$(tracks).each(function(index,value) {
+								var duracionPista = convertirTiempo(value.duration);
 								if(value.artwork_url==null) 
 					 				value.artwork_url = "img/cover.jpg";
-				 					canciones +="<li data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+value.user.username+"</p></a></li>";
+				 					canciones +="<li style='background:url(\""+value.waveform_url+"\")!important' data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+duracionPista.min+":"+duracionPista.sec+"</p></a></li>";
 				 				$(".ultimas_canciones").html(canciones);
 				 				$(".ultimas_canciones").listview("refresh");
 				 				posicion++;
@@ -44,6 +48,9 @@
 					
 				});
 				$(".playBtn").click(function() {tooglePause()});
+				$(".nextBtn").click(function() {playSiguiente()});
+				$(".antBtn").click(function() {playAnterior()});
+				$(".bucleBtn").click(function() {toogleLoop()});toogleLoop
 			});
 			function playNext(posicion) {
 				var nuevaposicion = parseInt(posicion)+parseInt(1);
@@ -63,39 +70,118 @@
 				soundManager.stopAll();
 		  		soundManager.play(id,{
 		  			onplay:function() {
+		  				$("#currentPlaying").val(id);
 		  				$(".play a").attr("data-playing","true");
-						$(".play a").html("Pause");
+						$(".play a").html('<svg class="icon icon-pause2"><use xlink:href="#icon-pause2"></use></svg>');
 		  			},
 			  		onfinish:function() {
-			  			playNext(posicion);
+			  			if($(".bucle a").attr("data-active")=="true")
+			  				playNext(posicion);
+			  		},
+			  		whileplaying:function() {
+			  			var duracionTotal = convertirTiempo(this.position);
+   						$(".duration").html(duracionTotal.min+":"+duracionTotal.sec);
 			  		}
 		  		});
 			}
 
 			function tooglePause() {
-				if($(".play a").attr("data-playing")=="true"){
-					soundManager.pauseAll();
-					$(".play a").attr("data-playing","false");
-					$(".play a").html("Play");
+				if($("#currentPlaying").val()=="false") {
+					playSong($("li[data-posicion='1']").attr("data-id"));
+				}else {
+					if($(".play a").attr("data-playing")=="true"){
+						soundManager.pauseAll();
+						$(".play a").attr("data-playing","false");
+						$(".play a").html('<svg class="icon icon-play3"><use xlink:href="#icon-play3"></use></svg>');
+					}
+					else if($(".play a").attr("data-playing")=="false"){
+						soundManager.resumeAll();
+						$(".play a").attr("data-playing","true");
+						$(".play a").html('<svg class="icon icon-pause2"><use xlink:href="#icon-pause2"></use></svg>');
+					}
 				}
-				else if($(".play a").attr("data-playing")=="false"){
-					soundManager.resumeAll();
-					$(".play a").attr("data-playing","true");
-					$(".play a").html("Pause");
+			}
+			function convertirTiempo(mil) {
+				var tiempo = {
+					min : (mil/1000/60) << 0,
+					sec : parseInt((mil/1000) % 60)
+				};
+				if(tiempo.sec<10)
+					tiempo.sec = "0"+tiempo.sec;
+				return tiempo;
+			}
+			function playSiguiente() {
+				var idActual = $("#currentPlaying").val();
+				if(idActual!="false") {
+					var nuevaposicion = parseInt($("li[data-id='"+idActual+"']").attr("data-posicion"))+parseInt(1);
+					soundManager.stopAll();
+					if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+						posicion = 1;
+					else
+						posicion = nuevaposicion;
+
+					playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
 				}
+			}
+			function playAnterior() {
+				var idActual = $("#currentPlaying").val();
+				if(idActual!="false") {
+					var nuevaposicion = parseInt($("li[data-id='"+idActual+"']").attr("data-posicion"))-parseInt(1);
+					soundManager.stopAll();
+					if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+						posicion = $(".ultimas_canciones li").length;
+					else
+						posicion = nuevaposicion;
+
+					playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
+				}
+			}
+			function toogleLoop() {
+				if($(".bucle a").attr("data-active")=="true")
+					$(".bucle a").attr("data-active","false");
+				else if($(".bucle a").attr("data-active")=="false")
+					$(".bucle a").attr("data-active","true");
 			}
 		</script>
 	</head>
 	<body>
 		<div data-role="page">
-			<div data-role="header"><img src="img/logo.png" /></div>
+			<div data-role="header">
+				<img src="img/logo.png" />
+				<div class="social-icons">
+					<a href="https://soundcloud.com/rajobos" target="blank"><svg class="icon icon-soundcloud"><use xlink:href="#icon-soundcloud"></use></svg></a>
+					<a href="https://www.facebook.com/djrajobosoficial" target="blank"><svg class="icon icon-facebook2"><use xlink:href="#icon-facebook2"></use></svg></a>
+					<a href="https://twitter.com/Rajobos_Oficial" target="blank"><svg class="icon icon-twitter2"><use xlink:href="#icon-twitter2"></use></svg></a>
+					<a href="https://www.youtube.com/user/deejayrajobos" target="blank"><svg class="icon icon-youtube3"><use xlink:href="#icon-youtube3"></use></svg></a>
+				</div>
+			</div>
 			<div data-role="content" style="margin:auto" class="ui-content" role="main">
 				<ul class="ui-listview ultimas_canciones" data-split-theme="a" data-split-icon="gear" data-role="listview"></ul>
 			</div>
 			<div class="soundbar">
-				<div class="play"><a class="playBtn" href="#" data-playing="false">Play</a></div>
-				<div class="media-info">Título</div>
+				<input type="hidden" value="false" id="currentPlaying" >
+				<div class="play">
+					<a class="playBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-play3"></use></svg>
+					</a>
+				</div>
+				<div class="anterior">
+					<a class="antBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-first"></use></svg>
+					</a>
+				</div>
+				<div class="siguiente">
+					<a class="nextBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-last"></use></svg>
+					</a>
+				</div>
+				<div class="bucle">
+					<a class="bucleBtn" href="javascript:void(0);" data-active="true">
+						<svg class="icon icon-loop"><use xlink:href="#icon-loop"></use></svg>
+					</a>
+				</div>
 				<div class="duration">0:00</div>
+				<div class="media-info">Título</div>
 				<div class="clear"></div>
 			</div>
 		</div>
