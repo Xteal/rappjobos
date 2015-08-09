@@ -17,9 +17,11 @@
 		<script src="script/bar-ui.js"></script>
 		<script src="script/demo.js"></script>		
 		<script>
+			//Rajobos: 135802134
+			//Kevin: 166601907
 			$(document).on('pageinit', function() {
 					var mySound, canciones ="",posicion=1;
-					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
 						$.getJSON(url, function(tracks) {
 							$(tracks).each(function(index,value) {
 								if(value.artwork_url==null) 
