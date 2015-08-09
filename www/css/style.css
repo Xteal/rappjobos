@@ -49,3 +49,24 @@ div [data-role="header"] {
 	margin:auto;
 	margin-top:2.5em;
 }
+.soundbar {
+	padding:1em;
+	height:20px;
+	background:#000;
+	position:fixed;
+	bottom:0;
+	width:100%;
+}
+.play {
+	float:left;
+}
+.media-info {
+	text-align:center;
+	width:90%;
+	float:left;
+	color:white;
+}
+.duration {
+	float:right;
+	margin-right:2em;
+}

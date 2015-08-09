@@ -18,7 +18,7 @@
 		<script src="script/demo.js"></script>		
 		<script>
 			$(document).on('pageinit', function() {
-				var mySound, canciones ="",posicion=1;
+					var mySound, canciones ="",posicion=1;
 					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
 						$.getJSON(url, function(tracks) {
 							$(tracks).each(function(index,value) {
@@ -38,13 +38,10 @@
 	
 				$(".ultimas_canciones").on("click","li",function() {
 					var id = $(this).attr("data-id");
-					var posicion = $(this).attr("data-posicion");
-					if(mySound)
-						soundManager.stopAll();
-				  		soundManager.play(id,{onfinish:function() {
-				  			playNext(posicion);
-				  		}});
+					playSong(id);
+					
 				});
+				$(".playBtn").click(function() {tooglePause()});
 			});
 			function playNext(posicion) {
 				var nuevaposicion = parseInt(posicion)+parseInt(1);
@@ -54,9 +51,36 @@
 				else
 					posicion = nuevaposicion;
 
-				soundManager.play($("li[data-posicion='"+posicion+"']").attr("data-id"),{onfinish:function() {
-		  			playNext(posicion);
-		  		}});
+				playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
+			}
+
+			function playSong(id) {
+				var posicion = $("li[data-id='"+id+"']").attr("data-posicion");
+				var titulo = $("li[data-id='"+id+"']").find("h3").html();
+				$(".media-info").html(titulo);
+				soundManager.stopAll();
+		  		soundManager.play(id,{
+		  			onplay:function() {
+		  				$(".play a").attr("data-playing","true");
+						$(".play a").html("Pause");
+		  			},
+			  		onfinish:function() {
+			  			playNext(posicion);
+			  		}
+		  		});
+			}
+
+			function tooglePause() {
+				if($(".play a").attr("data-playing")=="true"){
+					soundManager.pauseAll();
+					$(".play a").attr("data-playing","false");
+					$(".play a").html("Play");
+				}
+				else if($(".play a").attr("data-playing")=="false"){
+					soundManager.resumeAll();
+					$(".play a").attr("data-playing","true");
+					$(".play a").html("Pause");
+				}
 			}
 		</script>
 	</head>
@@ -65,6 +89,12 @@
 			<div data-role="header"><img src="img/logo.png" /></div>
 			<div data-role="content" style="margin:auto" class="ui-content" role="main">
 				<ul class="ui-listview ultimas_canciones" data-split-theme="a" data-split-icon="gear" data-role="listview"></ul>
+			</div>
+			<div class="soundbar">
+				<div class="play"><a class="playBtn" href="#" data-playing="false">Play</a></div>
+				<div class="media-info">Título</div>
+				<div class="duration">0:00</div>
+				<div class="clear"></div>
 			</div>
 		</div>
 	</body>
