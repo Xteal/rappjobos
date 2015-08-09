@@ -22,10 +22,14 @@
 			//Rajobos: 135802134
 			//Kevin: 166601907
 			$(document).on('pageinit', function() {
+					$( "div[data-role='page']" ).loader({
+					  html: "<span class='ui-icon ui-icon-loading'><img src='jquery-logo.png' /><h2>is loading for you ...</h2></span>"
+					});
 					$("#includedContent").load("icons.html"); 
 					var mySound, canciones ="",posicion=1;
-					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
 						$.getJSON(url, function(tracks) {
+							$.mobile.loading( "show" );
 							$(tracks).each(function(index,value) {
 								var duracionPista = convertirTiempo(value.duration);
 								if(value.artwork_url==null) 
@@ -39,8 +43,10 @@
 							    	id: value.id,
 							    	url: value.stream_url+"?client_id=f36abe5e283bc2059b1f55507af890eb"
 							    });
+							});
+						}).promise().done(function() {
+							$.mobile.loading( "hide" );
 						});
-					});
 	
 				$(".ultimas_canciones").on("click","li",function() {
 					var id = $(this).attr("data-id");
@@ -147,7 +153,7 @@
 	<body>
 		<div data-role="page">
 			<div data-role="header">
-				<img src="img/logo.png" />
+				<img src="img/logo-alpha.png" />
 				<div class="social-icons">
 					<a href="https://soundcloud.com/rajobos" target="blank"><svg class="icon icon-soundcloud"><use xlink:href="#icon-soundcloud"></use></svg></a>
 					<a href="https://www.facebook.com/djrajobosoficial" target="blank"><svg class="icon icon-facebook2"><use xlink:href="#icon-facebook2"></use></svg></a>
