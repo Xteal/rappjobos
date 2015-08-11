@@ -9,23 +9,23 @@
 		<link href="css/jquery.mobile.inline-png-1.4.5.min.css" rel="stylesheet" type="text/css"/>
 		<link href="css/jquery.mobile.icons-1.4.5.min.css" rel="stylesheet" type="text/css"/>
 		<link href="css/style.css" rel="stylesheet" type="text/css"/>
-		<link href="css/bar-ui.css" rel="stylesheet" type="text/css"/>
 		<script src="js/jquery.js"></script>
 		<script src="js/jquery.mobile-1.4.5.min.js"></script>
+		<script src="js/vertical-slider.js"></script>
 		<script src="js/sdk-2.0.0.js"></script>
 		<script src="script/soundmanager2-nodebug-jsmin.js"></script>
-		<script src="script/bar-ui.js"></script>
-		<script src="script/demo.js"></script>	
-		<link rel="stylesheet" href="https://i.icomoon.io/public/temp/7152cdf696/UntitledProject/style-svg.css">
-		<script src="https://i.icomoon.io/public/temp/7152cdf696/UntitledProject/svgembedder.js"></script>	
 		<script>
 			//Rajobos: 135802134
 			//Kevin: 166601907
 			$(document).on('pageinit', function() {
+					$("#svgs").load("./svgdefs.svg"); 
+					soundManager.setup({
+				    	url: './swf/'
+				  	});
 					$( "div[data-role='page']" ).loader({
-					  html: "<span class='ui-icon ui-icon-loading'><img src='jquery-logo.png' /><h2>is loading for you ...</h2></span>"
+					  	html: "<span class='ui-icon ui-icon-loading'><img src='jquery-logo.png' /><h2>is loading for you ...</h2></span>"
 					});
-					$("#includedContent").load("icons.html"); 
+					
 					var mySound, canciones ="",posicion=1;
 					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
 						$.getJSON(url, function(tracks) {
@@ -34,7 +34,7 @@
 								var duracionPista = convertirTiempo(value.duration);
 								if(value.artwork_url==null) 
 					 				value.artwork_url = "img/cover.jpg";
-				 					canciones +="<li style='background:url(\""+value.waveform_url+"\")!important' data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+duracionPista.min+":"+duracionPista.sec+"</p></a></li>";
+				 					canciones +="<li style='background:url(\""+value.waveform_url+"\")!important' data-duracion='"+value.duration+"' data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+duracionPista.min+":"+duracionPista.sec+"</p></a></li>";
 				 				$(".ultimas_canciones").html(canciones);
 				 				$(".ultimas_canciones").listview("refresh");
 				 				posicion++;
@@ -56,7 +56,21 @@
 				$(".playBtn").click(function() {tooglePause()});
 				$(".nextBtn").click(function() {playSiguiente()});
 				$(".antBtn").click(function() {playAnterior()});
-				$(".bucleBtn").click(function() {toogleLoop()});toogleLoop
+				$(".bucleBtn").click(function() {toogleLoop()});
+				$( "#slider-12" ).on( "slidestop", function(event,ui) {
+					var seleccionaPosicion = $("#slider-12").val();
+					soundManager.pauseAll();
+					soundManager.setPosition(seleccionaPosicion);
+					$("#slider12").slider("refresh");
+					soundManager.resumeAll();			
+				});
+				$( "#volumen" ).on( "slidestop", function(event,ui) {
+					var seleccionaVolumen = $("#volumen").val();
+					soundManager.setVolume(seleccionaVolumen);		
+				});
+				$( ".volumenBtn" ).click(function() {
+				  $( ".volumeBar" ).toggle();
+				});
 			});
 			function playNext(posicion) {
 				var nuevaposicion = parseInt(posicion)+parseInt(1);
@@ -72,10 +86,13 @@
 			function playSong(id) {
 				var posicion = $("li[data-id='"+id+"']").attr("data-posicion");
 				var titulo = $("li[data-id='"+id+"']").find("h3").html();
+				var duration = $("li[data-id='"+id+"']").attr("data-duracion");
 				$(".media-info").html(titulo);
 				soundManager.stopAll();
 		  		soundManager.play(id,{
 		  			onplay:function() {
+		  				$("#slider-12").val(0);
+		  				$("#slider-12").attr("max",duration);
 		  				$("#currentPlaying").val(id);
 		  				$(".play a").attr("data-playing","true");
 						$(".play a").html('<svg class="icon icon-pause2"><use xlink:href="#icon-pause2"></use></svg>');
@@ -86,6 +103,8 @@
 			  		},
 			  		whileplaying:function() {
 			  			var duracionTotal = convertirTiempo(this.position);
+			  			$("#slider-12").val(this.position);
+			  			$("#slider-12").slider("refresh");
    						$(".duration").html(duracionTotal.min+":"+duracionTotal.sec);
 			  		}
 		  		});
@@ -151,6 +170,7 @@
 		</script>
 	</head>
 	<body>
+		<div id="svgs"></div>
 		<div data-role="page">
 			<div data-role="header">
 				<img src="img/logo-alpha.png" />
@@ -166,6 +186,16 @@
 			</div>
 			<div class="soundbar">
 				<input type="hidden" value="false" id="currentPlaying" >
+				<div class="volumeBar">
+					<label for="volumen" class="ui-hidden-accessible">Volumen:</label>
+				    <input name="volumen" data-vertical="true" data-mini="true" data-highlight="true" data-theme="a" data-track-theme="b" id="volumen" min="0" max="100" value="100" type="range">
+				</div>
+				<div class="progressBar">		
+					<form class="full-width-slider">
+					    <label for="slider-12" class="ui-hidden-accessible">Progreso:</label>
+					    <input name="slider-12" data-mini="true" data-highlight="true" data-theme="a" data-track-theme="b" id="slider-12" min="0" max="100" value="0" type="range">
+					</form>
+				</div>
 				<div class="play">
 					<a class="playBtn" href="javascript:void(0);" data-playing="false">
 						<svg class="icon icon-play3"><use xlink:href="#icon-play3"></use></svg>
@@ -179,6 +209,11 @@
 				<div class="siguiente">
 					<a class="nextBtn" href="javascript:void(0);" data-playing="false">
 						<svg class="icon icon-play3"><use xlink:href="#icon-last"></use></svg>
+					</a>
+				</div>
+				<div class="volumenIcon">
+					<a class="volumenBtn" href="javascript:void(0);" data-active="false">
+						<svg class="icon icon-volume-medium"><use xlink:href="#icon-volume-medium"></use></svg>
 					</a>
 				</div>
 				<div class="bucle">
