@@ -27,7 +27,7 @@
 					});
 					
 					var mySound, canciones ="",posicion=1;
-					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=166601907';
 						$.getJSON(url, function(tracks) {
 							$.mobile.loading( "show" );
 							$(tracks).each(function(index,value) {
@@ -108,6 +108,7 @@
    						$(".duration").html(duracionTotal.min+":"+duracionTotal.sec);
 			  		}
 		  		});
+		  		soundManager.setVolume($("#volumen").val());
 			}
 
 			function tooglePause() {
