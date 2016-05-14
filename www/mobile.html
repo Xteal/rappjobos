@@ -1,0 +1,225 @@
+<html>
+	<head>
+		<title>RappJobos</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<link href="css/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.theme-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.structure-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.inline-svg-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.inline-png-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/jquery.mobile.icons-1.4.5.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/style.css" rel="stylesheet" type="text/css"/>
+		<script src="js/jquery.js"></script>
+		<script src="js/jquery.mobile-1.4.5.min.js"></script>
+		<script src="js/vertical-slider.js"></script>
+		<script src="js/sdk-2.0.0.js"></script>
+		<script src="script/soundmanager2-nodebug-jsmin.js"></script>
+		<script>
+			//Rajobos: 135802134
+			//Kevin: 166601907
+			$(document).on('pageinit', function() {
+					$("#svgs").load("./svgdefs.svg"); 
+					$( "div[data-role='page']" ).loader({
+					  	html: "<span class='ui-icon ui-icon-loading'><img src='jquery-logo.png' /><h2>is loading for you ...</h2></span>"
+					});
+					
+					var soundManager= [], canciones ="",posicion=1;
+					var url = 'https://api.soundcloud.com/tracks/?client_id=f36abe5e283bc2059b1f55507af890eb&user_id=135802134';
+						$.getJSON(url, function(tracks) {
+							$.mobile.loading( "show" );
+							$(tracks).each(function(index,value) {
+								var duracionPista = convertirTiempo(value.duration);
+								if(value.artwork_url==null) 
+					 				value.artwork_url = "img/cover.jpg";
+				 					canciones +="<li style='background:url(\""+value.waveform_url+"\")!important' data-duracion='"+value.duration+"' data-posicion='"+posicion+"' class='play_song' data-id='"+value.id+"' data-stream='"+value.stream_url+"'><a class='ui-btn' href='index.html'><img src='"+value.artwork_url+"' /><h3>"+value.title+"</h3><p>"+duracionPista.min+":"+duracionPista.sec+"</p></a></li>";
+				 				$(".ultimas_canciones").html(canciones);
+				 				$(".ultimas_canciones").listview("refresh");
+				 				posicion++;
+
+				 				soundManager[posicion] = new Media(value.stream_url+"?client_id=f36abe5e283bc2059b1f55507af890eb");
+							});
+						}).promise().done(function() {
+							$.mobile.loading( "hide" );
+						});
+	
+				$(".ultimas_canciones").on("click","li",function() {
+					var id = $(this).attr("data-id");
+					playSong(id);
+					
+				});
+				$(".playBtn").click(function() {tooglePause()});
+				$(".nextBtn").click(function() {playSiguiente()});
+				$(".antBtn").click(function() {playAnterior()});
+				$(".bucleBtn").click(function() {toogleLoop()});
+				$( "#slider-12" ).on( "slidestop", function(event,ui) {
+					var seleccionaPosicion = $("#slider-12").val();
+					soundManager.pauseAll();
+					soundManager.setPosition(seleccionaPosicion);
+					$("#slider12").slider("refresh");
+					soundManager.resumeAll();			
+				});
+				$( "#volumen" ).on( "slidestop", function(event,ui) {
+					var seleccionaVolumen = $("#volumen").val();
+					soundManager.setVolume(seleccionaVolumen);		
+				});
+				$( ".volumenBtn" ).click(function() {
+				  $( ".volumeBar" ).toggle();
+				});
+			});
+			function playNext(posicion) {
+				var nuevaposicion = parseInt(posicion)+parseInt(1);
+				soundManager.stopAll();
+				if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+					posicion = 1;
+				else
+					posicion = nuevaposicion;
+
+				playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
+			}
+
+			function playSong(id) {
+				var posicion = $("li[data-id='"+id+"']").attr("data-posicion");
+				var titulo = $("li[data-id='"+id+"']").find("h3").html();
+				var duration = $("li[data-id='"+id+"']").attr("data-duracion");
+				$(".media-info").html(titulo);
+				soundManager.stopAll();
+		  		soundManager.play(id,{
+		  			onplay:function() {
+		  				$("#slider-12").val(0);
+		  				$("#slider-12").attr("max",duration);
+		  				$("#currentPlaying").val(id);
+		  				$(".play a").attr("data-playing","true");
+						$(".play a").html('<svg class="icon icon-pause2"><use xlink:href="#icon-pause2"></use></svg>');
+		  			},
+			  		onfinish:function() {
+			  			if($(".bucle a").attr("data-active")=="true")
+			  				playNext(posicion);
+			  		},
+			  		whileplaying:function() {
+			  			var duracionTotal = convertirTiempo(this.position);
+			  			$("#slider-12").val(this.position);
+			  			$("#slider-12").slider("refresh");
+   						$(".duration").html(duracionTotal.min+":"+duracionTotal.sec);
+			  		}
+		  		});
+		  		soundManager.setVolume($("#volumen").val());
+			}
+
+			function tooglePause() {
+				if($("#currentPlaying").val()=="false") {
+					playSong($("li[data-posicion='1']").attr("data-id"));
+				}else {
+					if($(".play a").attr("data-playing")=="true"){
+						soundManager.pauseAll();
+						$(".play a").attr("data-playing","false");
+						$(".play a").html('<svg class="icon icon-play3"><use xlink:href="#icon-play3"></use></svg>');
+					}
+					else if($(".play a").attr("data-playing")=="false"){
+						soundManager.resumeAll();
+						$(".play a").attr("data-playing","true");
+						$(".play a").html('<svg class="icon icon-pause2"><use xlink:href="#icon-pause2"></use></svg>');
+					}
+				}
+			}
+			function convertirTiempo(mil) {
+				var tiempo = {
+					min : (mil/1000/60) << 0,
+					sec : parseInt((mil/1000) % 60)
+				};
+				if(tiempo.sec<10)
+					tiempo.sec = "0"+tiempo.sec;
+				return tiempo;
+			}
+			function playSiguiente() {
+				var idActual = $("#currentPlaying").val();
+				if(idActual!="false") {
+					var nuevaposicion = parseInt($("li[data-id='"+idActual+"']").attr("data-posicion"))+parseInt(1);
+					soundManager.stopAll();
+					if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+						posicion = 1;
+					else
+						posicion = nuevaposicion;
+
+					playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
+				}
+			}
+			function playAnterior() {
+				var idActual = $("#currentPlaying").val();
+				if(idActual!="false") {
+					var nuevaposicion = parseInt($("li[data-id='"+idActual+"']").attr("data-posicion"))-parseInt(1);
+					soundManager.stopAll();
+					if($("li[data-posicion='"+nuevaposicion+"']").length==0) 
+						posicion = $(".ultimas_canciones li").length;
+					else
+						posicion = nuevaposicion;
+
+					playSong($("li[data-posicion='"+posicion+"']").attr("data-id"));
+				}
+			}
+			function toogleLoop() {
+				if($(".bucle a").attr("data-active")=="true")
+					$(".bucle a").attr("data-active","false");
+				else if($(".bucle a").attr("data-active")=="false")
+					$(".bucle a").attr("data-active","true");
+			}
+		</script>
+	</head>
+	<body>
+		<div id="svgs"></div>
+		<div data-role="page">
+			<div data-role="header">
+				<img src="img/logo-alpha.png" />
+				<div class="social-icons">
+					<a href="https://soundcloud.com/rajobos" target="blank"><svg class="icon icon-soundcloud"><use xlink:href="#icon-soundcloud"></use></svg></a>
+					<a href="https://www.facebook.com/djrajobosoficial" target="blank"><svg class="icon icon-facebook2"><use xlink:href="#icon-facebook2"></use></svg></a>
+					<a href="https://twitter.com/Rajobos_Oficial" target="blank"><svg class="icon icon-twitter2"><use xlink:href="#icon-twitter2"></use></svg></a>
+					<a href="https://www.youtube.com/user/deejayrajobos" target="blank"><svg class="icon icon-youtube3"><use xlink:href="#icon-youtube3"></use></svg></a>
+				</div>
+			</div>
+			<div data-role="content" style="margin:auto" class="ui-content" role="main">
+				<ul class="ui-listview ultimas_canciones" data-split-theme="a" data-split-icon="gear" data-role="listview"></ul>
+			</div>
+			<div class="soundbar">
+				<input type="hidden" value="false" id="currentPlaying" >
+				<div class="volumeBar">
+					<label for="volumen" class="ui-hidden-accessible">Volumen:</label>
+				    <input name="volumen" data-vertical="true" data-mini="true" data-highlight="true" data-theme="a" data-track-theme="b" id="volumen" min="0" max="100" value="100" type="range">
+				</div>
+				<div class="progressBar">		
+					<form class="full-width-slider">
+					    <label for="slider-12" class="ui-hidden-accessible">Progreso:</label>
+					    <input name="slider-12" data-mini="true" data-highlight="true" data-theme="a" data-track-theme="b" id="slider-12" min="0" max="100" value="0" type="range">
+					</form>
+				</div>
+				<div class="play">
+					<a class="playBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-play3"></use></svg>
+					</a>
+				</div>
+				<div class="anterior">
+					<a class="antBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-first"></use></svg>
+					</a>
+				</div>
+				<div class="siguiente">
+					<a class="nextBtn" href="javascript:void(0);" data-playing="false">
+						<svg class="icon icon-play3"><use xlink:href="#icon-last"></use></svg>
+					</a>
+				</div>
+				<div class="volumenIcon">
+					<a class="volumenBtn" href="javascript:void(0);" data-active="false">
+						<svg class="icon icon-volume-medium"><use xlink:href="#icon-volume-medium"></use></svg>
+					</a>
+				</div>
+				<div class="bucle">
+					<a class="bucleBtn" href="javascript:void(0);" data-active="true">
+						<svg class="icon icon-loop"><use xlink:href="#icon-loop"></use></svg>
+					</a>
+				</div>
+				<div class="duration">0:00</div>
+				<div class="media-info">Título</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</body>
+</html>
