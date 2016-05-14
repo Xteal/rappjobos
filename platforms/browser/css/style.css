@@ -1,0 +1,161 @@
+div [data-role="header"] {
+	border-top:0px!important;
+	background:rgba(0,0,0,1)!important;
+	position:fixed;
+	z-index:9;
+	width:100%;
+	padding:5px;
+}
+.social-icons {
+	float:right;
+	margin:13px;
+}
+.social-icons a{
+	margin-right:3px;
+	font-size:1.3em;
+}
+.social-icons .icon-soundcloud {
+	color:#FF6300;
+}
+.social-icons .icon-facebook2{
+	color:#4862A3;
+}
+.social-icons .icon-twitter2{
+	color:#88C9F9;
+}
+.social-icons .icon-youtube3{
+	color:#CC181E;
+}
+.ultimas_canciones {
+	width:100%;
+	padding:1em;
+	margin-top:2.5em!important;
+	margin-bottom:2.5em!important;
+}
+.ultimas_canciones li {
+	border-bottom:2px #333;
+	cursor:pointer;
+	margin-bottom:3px;
+}
+.ultimas_canciones li:hover {
+	background: #333;
+}
+
+.ultimas_canciones li>img {
+	float:left;
+	margin-left:5px;
+}
+
+.ultimas_canciones li .titulo_remix{
+	float:right;
+	font-size:0.75em;
+	margin.left:5px;
+}
+
+.clear {
+	clear:both;
+}
+.sm2-bar-ui {
+ font-size: 22px;
+}
+.sm2-bar-ui .sm2-main-controls,
+.sm2-bar-ui .sm2-playlist-drawer {
+ background-color: #000000; /* non-RGBA fallback */
+ background-color: rgba(0, 0, 0, 0.61);
+}
+.sm2-bar-ui .sm2-inline-texture {
+ background: transparent;
+}
+.loading {
+	margin:auto;
+	margin-top:2.5em;
+}
+.soundbar {
+	text-shadow:none;
+	padding:1em;
+	height:35px;
+	background:#000;
+	position:fixed;
+	bottom:0;
+	width:100%;
+}
+.soundbar a {
+	padding:0.5em;
+}
+.volumeBar {
+	display:none;
+	background:#000;
+	padding:1em;
+	right:30px;
+	position:absolute;
+	bottom:35px;
+	width:30px;
+}
+.full-width-slider input, .volumeBar input {
+    display: none;
+}
+.volumeBar .ui-slider-handle{
+	margin-left:-3px!important;
+}
+.progressBar {
+	margin:auto;
+	margin-left:-1em;
+    margin-top:-36px;
+    padding:0.1em;
+    width:99.8%;
+}
+.play {
+	float:left;
+}
+.play a {
+	text-decoration: none;
+}
+.anterior {
+	margin-left:12px;
+	float:left;
+}
+.anterior a {
+	text-decoration: none;
+}
+.siguiente {
+	margin-left:12px;
+	float:left;
+}
+.siguiente a {
+	text-decoration: none;
+}
+.media-info {
+	max-width:50%;
+	text-align:center;
+	margin:auto;
+	color:white;
+}
+.bucle{
+	float:right;
+	margin-right:2em;
+}
+.volumenIcon {
+	float:right;
+	margin-right:1.5em;
+}
+.bucle a[data-active='false'] {
+	color:#545454;
+}
+.duration {
+	color:#CECECE;
+	float:right;
+	margin-right:2em;
+}
+.icon {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
+
+.icon-play3 {
+	font-size: 24px; // works because "width" & "height" were set using em units
+}
+.icon-pause2 {
+	font-size: 24px; // works because "width" & "height" were set using em units
+}
